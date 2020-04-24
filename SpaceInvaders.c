@@ -67,14 +67,76 @@
 void DisableInterrupts(void); // Disable interrupts
 void EnableInterrupts(void);  // Enable interrupts
 
+typedef enum {dead, alive} status_t;
+struct player{
+	int32_t x;
+	int32_t y;
+	int32_t vx, vy; //pixels/30Hz
+	const unsigned short *image;
+	const unsigned short *black;
+	uint32_t w;
+	uint32_t h;
+	status_t life;
+};
+
+typedef struct player player_t;
+int Flag;
+player_t Player;
+
+void GameDraw(void){
+	if(Player.life == alive){
+		ST7735_DrawBitmap(Player.x, Player.y, Player.image, Player.w, Player.h);
+	}
+	else{
+		ST7735_DrawBitmap(Player.x, Player.y, Player.black, Player.w, Player.h);
+	}	
+}
+
+void GameInit(void){
+	Player.x=53; 
+	Player.y=151;
+	Player.vx=0;
+	Player.vy=0;
+	Player.image=PlayerShip0;
+	Player.black=BlackShip;
+	Player.w=18;
+	Player.h=8;
+	Player.life=alive;
+	GameDraw();
+}
+
+void GameMove(void){ //  checks if player is alive to move
+		// ******IF STATEMENTS TO CHECK POSITION OF ENEMIES IN RELATION TO PLAYER*******
+		// if(enemy in same x and y range as top of player then player.life=dead)
+	//else{
+			Player.x = Player.vx; // Player.vx updated in background thread
+		//}
+	GameDraw();
+}
+
+void SysTick_Init(uint32_t period){
+	NVIC_ST_CTRL_R = 0;
+	NVIC_ST_RELOAD_R = period-1; 
+	NVIC_ST_CURRENT_R = 0;
+	NVIC_SYS_PRI3_R = (NVIC_SYS_PRI3_R & 0x00FFFFFF) | 0x40000000; // set priority to 2
+	NVIC_ST_CTRL_R = 7;
+}
+
+uint32_t ADCMail;
+void SysTick_Handler(void){
+	ADCMail = ADC_In();
+	ADCMail = ADCMail/37; // convert to position on LCD
+	Player.vx= ADCMail;
+	ST7735_DrawBitmap(Player.x, Player.y, Player.black, Player.w, Player.h);
+	GameMove();
+}
 
 int main(void){
 	RedSwitch_Init();
 	BlueSwitch_Init();
 	Button_Init();
   Random_Init(1);
-	EnableInterrupts();
-	
+	ADC_Init();
 
   Output_Init();
   ST7735_FillScreen(0x0000);            // set screen to black
@@ -92,12 +154,12 @@ int main(void){
 	ST7735_OutString("Espa\xA4ol");
 	
 	// ********CHECK WHICH LANGUAGE BUTTON IS PRESSED***********
+	GameInit();
+  ST7735_FillScreen(0x0000); 
+	SysTick_Init(80000000/30);
+	EnableInterrupts();
   
-  ST7735_DrawBitmap(22, 159, PlayerShip0, 18,8); // player ship bottom
-  ST7735_DrawBitmap(53, 151, Bunker0, 18,5);
-  ST7735_DrawBitmap(42, 159, PlayerShip1, 18,8); // player ship bottom
-  ST7735_DrawBitmap(62, 159, PlayerShip2, 18,8); // player ship bottom
-  ST7735_DrawBitmap(82, 159, PlayerShip3, 18,8); // player ship bottom
+  ST7735_DrawBitmap(53, 140, Bunker0, 18,5);
 
   ST7735_DrawBitmap(0, 9, SmallEnemy10pointA, 16,10);
   ST7735_DrawBitmap(20,9, SmallEnemy10pointB, 16,10);
@@ -106,6 +168,7 @@ int main(void){
   ST7735_DrawBitmap(80, 9, SmallEnemy30pointA, 16,10);
   ST7735_DrawBitmap(100, 9, SmallEnemy30pointB, 16,10);
 
+	while(1){}
 
   ST7735_FillScreen(0x0000);   // set screen to black
   ST7735_SetCursor(1, 1);
@@ -117,8 +180,4 @@ int main(void){
   ST7735_SetCursor(2, 4);
 	// ********DISPLAY SCORE IN LANGUAGE SELECTED********
   LCD_OutDec(1234);
-	while(1){}
 }
-
-
-
