@@ -60,9 +60,11 @@
 #include "Sound.h"
 #include "Timer0.h"
 #include "Timer1.h"
-#include "Switches.h"
 #include "Buttons.h"
 #include "TExaS.h"
+
+extern void Delay1ms(uint32_t n);
+extern int8_t lang;
 
 void DisableInterrupts(void); // Disable interrupts
 void EnableInterrupts(void);  // Enable interrupts
@@ -132,11 +134,10 @@ void SysTick_Handler(void){
 }
 
 int main(void){
-	RedSwitch_Init();
-	BlueSwitch_Init();
-	Button_Init();
+	Button_Init(); // enables edge triggered interrupts
   Random_Init(1);
 	ADC_Init();
+	DAC_Init();
 
   Output_Init();
   ST7735_FillScreen(0x0000);            // set screen to black
@@ -145,15 +146,13 @@ int main(void){
 	ST7735_SetCursor(1, 2);
 	ST7735_OutString("Elegir un idioma");
 	ST7735_SetCursor(1, 4);
-  ST7735_OutString("Red button:"); //PE0
+  ST7735_OutString("Button 2: English"); //PF0
 	ST7735_SetCursor(1, 5);
-	ST7735_OutString("English");
-	ST7735_SetCursor(1, 7);
-	ST7735_OutString("Bot\xA2n azul:"); //PA2
-	ST7735_SetCursor(1, 8);
-	ST7735_OutString("Espa\xA4ol");
+	ST7735_OutString("Bot\xA2n 1: Espa\xA4ol"); //PF4
 	
-	// ********CHECK WHICH LANGUAGE BUTTON IS PRESSED***********
+	while((GPIO_PORTF_DATA_R & 0x11)==0x11){ // wait for button for language to be pressed
+	}
+
 	GameInit();
   ST7735_FillScreen(0x0000); 
 	SysTick_Init(80000000/30);
@@ -171,13 +170,23 @@ int main(void){
 	while(1){}
 
   ST7735_FillScreen(0x0000);   // set screen to black
-  ST7735_SetCursor(1, 1);
-  ST7735_OutString("GAME OVER");
-  ST7735_SetCursor(1, 2);
-  ST7735_OutString("Nice try,");
-  ST7735_SetCursor(1, 3);
-  ST7735_OutString("Earthling!");
-  ST7735_SetCursor(2, 4);
 	// ********DISPLAY SCORE IN LANGUAGE SELECTED********
-  LCD_OutDec(1234);
+	
+	if(lang==1){
+		ST7735_SetCursor(1, 1);
+		ST7735_OutString("FIN DEL JUEGO");
+		ST7735_SetCursor(1, 2);
+		ST7735_OutString("Resultado:");
+		ST7735_SetCursor(11, 2);
+		LCD_OutDec(1234);
+	}
+	else{
+		ST7735_SetCursor(1, 1);
+		ST7735_OutString("GAME OVER");
+		ST7735_SetCursor(1, 2);
+		ST7735_OutString("Score:");
+		ST7735_SetCursor(7, 2);
+		LCD_OutDec(1234);
+	}
+  
 }

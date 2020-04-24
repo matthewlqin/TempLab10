@@ -21,8 +21,8 @@ I (DAC.h)(0x5E21FAE0)
 I (../inc/tm4c123gh6pm.h)(0x5388C2DA)
 I (Timer1.h)(0x5E21FAE0)
 F (.\LCD.s)(0x5EA23EF2)(--cpu Cortex-M4 --pd "__EVAL SETA 1" -g --apcs=interwork -I.\RTE\_SpaceInvaders-ID:\Users\12817\Documents\ARM\CMSIS\5.6.0\CMSIS\Core\Include-ID:\Users\12817\Documents\Keil\TM4C_DFP\1.1.0\Device\Include\TM4C123--pd "__UVISION_VERSION SETA 529" --pd "_RTE_ SETA 1" --pd "TM4C123GH6PM SETA 1"--list .\lcd.lst --xref -o .\lcd.o --depend .\lcd.d)
-F (.\Print.s)(0x56D7222A)(--cpu Cortex-M4 --pd "__EVAL SETA 1" -g --apcs=interwork -I.\RTE\_SpaceInvaders-ID:\Users\12817\Documents\ARM\CMSIS\5.6.0\CMSIS\Core\Include-ID:\Users\12817\Documents\Keil\TM4C_DFP\1.1.0\Device\Include\TM4C123--pd "__UVISION_VERSION SETA 529" --pd "_RTE_ SETA 1" --pd "TM4C123GH6PM SETA 1"--list .\print.lst --xref -o .\print.o --depend .\print.d)
-F (.\SpaceInvaders.c)(0x5EA27CCE)(-c --cpu Cortex-M4 -D__EVAL -g -O0 --apcs=interwork --split_sections -I .. -I ..\..\.. --C99-I.\RTE\_SpaceInvaders-ID:\Users\12817\Documents\ARM\CMSIS\5.6.0\CMSIS\Core\Include-ID:\Users\12817\Documents\Keil\TM4C_DFP\1.1.0\Device\Include\TM4C123-D__UVISION_VERSION="529" -D_RTE_ -DTM4C123GH6PM -Drvmdk -DPART_LM4F120H5QR-o .\spaceinvaders.o --omf_browse .\spaceinvaders.crf --depend .\spaceinvaders.d)
+F (.\Print.s)(0x5EA29CEA)(--cpu Cortex-M4 --pd "__EVAL SETA 1" -g --apcs=interwork -I.\RTE\_SpaceInvaders-ID:\Users\12817\Documents\ARM\CMSIS\5.6.0\CMSIS\Core\Include-ID:\Users\12817\Documents\Keil\TM4C_DFP\1.1.0\Device\Include\TM4C123--pd "__UVISION_VERSION SETA 529" --pd "_RTE_ SETA 1" --pd "TM4C123GH6PM SETA 1"--list .\print.lst --xref -o .\print.o --depend .\print.d)
+F (.\SpaceInvaders.c)(0x5EA29E2E)(-c --cpu Cortex-M4 -D__EVAL -g -O0 --apcs=interwork --split_sections -I .. -I ..\..\.. --C99-I.\RTE\_SpaceInvaders-ID:\Users\12817\Documents\ARM\CMSIS\5.6.0\CMSIS\Core\Include-ID:\Users\12817\Documents\Keil\TM4C_DFP\1.1.0\Device\Include\TM4C123-D__UVISION_VERSION="529" -D_RTE_ -DTM4C123GH6PM -Drvmdk -DPART_LM4F120H5QR-o .\spaceinvaders.o --omf_browse .\spaceinvaders.crf --depend .\spaceinvaders.d)
 I (D:\Users\12817\Documents\ARM\ARMCC\include\stdint.h)(0x5D9B96F8)
 I (../inc/tm4c123gh6pm.h)(0x5388C2DA)
 I (ST7735.h)(0x5E21FAE0)
@@ -34,7 +34,6 @@ I (Images.h)(0x5EA26387)
 I (Sound.h)(0x5EA22A2F)
 I (Timer0.h)(0x5E21FAE0)
 I (Timer1.h)(0x5E21FAE0)
-I (Switches.h)(0x5EA21FBC)
 I (Buttons.h)(0x5EA24F03)
 I (TExaS.h)(0x5EA2456B)
 F (.\ST7735.c)(0x5E21FA8C)(-c --cpu Cortex-M4 -D__EVAL -g -O0 --apcs=interwork --split_sections -I .. -I ..\..\.. --C99-I.\RTE\_SpaceInvaders-ID:\Users\12817\Documents\ARM\CMSIS\5.6.0\CMSIS\Core\Include-ID:\Users\12817\Documents\Keil\TM4C_DFP\1.1.0\Device\Include\TM4C123-D__UVISION_VERSION="529" -D_RTE_ -DTM4C123GH6PM -Drvmdk -DPART_LM4F120H5QR-o .\st7735.o --omf_browse .\st7735.crf --depend .\st7735.d)
@@ -42,12 +41,7 @@ I (D:\Users\12817\Documents\ARM\ARMCC\include\stdio.h)(0x5D9B96FA)
 I (D:\Users\12817\Documents\ARM\ARMCC\include\stdint.h)(0x5D9B96F8)
 I (ST7735.h)(0x5E21FAE0)
 I (../inc/tm4c123gh6pm.h)(0x5388C2DA)
-F (.\Switches.c)(0x5EA218A7)(-c --cpu Cortex-M4 -D__EVAL -g -O0 --apcs=interwork --split_sections -I .. -I ..\..\.. --C99-I.\RTE\_SpaceInvaders-ID:\Users\12817\Documents\ARM\CMSIS\5.6.0\CMSIS\Core\Include-ID:\Users\12817\Documents\Keil\TM4C_DFP\1.1.0\Device\Include\TM4C123-D__UVISION_VERSION="529" -D_RTE_ -DTM4C123GH6PM -Drvmdk -DPART_LM4F120H5QR-o .\switches.o --omf_browse .\switches.crf --depend .\switches.d)
-I (D:\Users\12817\Documents\ARM\ARMCC\include\stdint.h)(0x5D9B96F8)
-I (../inc/tm4c123gh6pm.h)(0x5388C2DA)
-I (switches.h)(0x5EA21FBC)
-F (.\Switches.h)(0x5EA21FBC)()
-F (.\Buttons.c)(0x5EA25654)(-c --cpu Cortex-M4 -D__EVAL -g -O0 --apcs=interwork --split_sections -I .. -I ..\..\.. --C99-I.\RTE\_SpaceInvaders-ID:\Users\12817\Documents\ARM\CMSIS\5.6.0\CMSIS\Core\Include-ID:\Users\12817\Documents\Keil\TM4C_DFP\1.1.0\Device\Include\TM4C123-D__UVISION_VERSION="529" -D_RTE_ -DTM4C123GH6PM -Drvmdk -DPART_LM4F120H5QR-o .\buttons.o --omf_browse .\buttons.crf --depend .\buttons.d)
+F (.\Buttons.c)(0x5EA29BFC)(-c --cpu Cortex-M4 -D__EVAL -g -O0 --apcs=interwork --split_sections -I .. -I ..\..\.. --C99-I.\RTE\_SpaceInvaders-ID:\Users\12817\Documents\ARM\CMSIS\5.6.0\CMSIS\Core\Include-ID:\Users\12817\Documents\Keil\TM4C_DFP\1.1.0\Device\Include\TM4C123-D__UVISION_VERSION="529" -D_RTE_ -DTM4C123GH6PM -Drvmdk -DPART_LM4F120H5QR-o .\buttons.o --omf_browse .\buttons.crf --depend .\buttons.d)
 I (../inc/tm4c123gh6pm.h)(0x5388C2DA)
 I (D:\Users\12817\Documents\ARM\ARMCC\include\stdint.h)(0x5D9B96F8)
 I (Sound.h)(0x5EA22A2F)

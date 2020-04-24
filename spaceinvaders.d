@@ -10,6 +10,5 @@
 .\spaceinvaders.o: Sound.h
 .\spaceinvaders.o: Timer0.h
 .\spaceinvaders.o: Timer1.h
-.\spaceinvaders.o: Switches.h
 .\spaceinvaders.o: Buttons.h
 .\spaceinvaders.o: TExaS.h

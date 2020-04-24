@@ -438,16 +438,6 @@
               <FilePath>.\ST7735.c</FilePath>
             </File>
             <File>
-              <FileName>Switches.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\Switches.c</FilePath>
-            </File>
-            <File>
-              <FileName>Switches.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>.\Switches.h</FilePath>
-            </File>
-            <File>
               <FileName>Buttons.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\Buttons.c</FilePath>

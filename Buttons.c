@@ -32,7 +32,17 @@ void Button_Init(void){volatile long delay;
   NVIC_EN0_R = 1<<30;   // 10)enable interrupt 30 in NVIC
 }
 
+uint8_t status=0;
+uint8_t lang;
 void GPIOPortF_Handler(void){
+	if(status==0){
+		if((GPIO_PORTF_RIS_R & 0x10)==0x10){ //PF4
+			lang=1; // Spanish
+		}
+		status++;
+		GPIO_PORTF_ICR_R = 0x11;      // acknowledge flag4
+	}
+	if(status==1){
 	if ((GPIO_PORTF_RIS_R & 0x01)==0x01){ //PF0
 		Sound_Play();
 	}
@@ -41,6 +51,7 @@ void GPIOPortF_Handler(void){
 		// **********EOR ALL INTERRUPTS USED****
 	}
   GPIO_PORTF_ICR_R = 0x11;      // acknowledge flag4
+	}
 }
 
 
