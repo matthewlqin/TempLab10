@@ -60,8 +60,9 @@
 #include "Sound.h"
 #include "Timer0.h"
 #include "Timer1.h"
+#include "Timer2.h"
 #include "Buttons.h"
-#include "TExaS.h"
+#include "TExas.h"
 
 extern void Delay1ms(uint32_t n);
 extern int8_t lang;
@@ -91,10 +92,11 @@ void GameDraw(void){
 	}
 	else{
 		ST7735_DrawBitmap(Player.x, Player.y, Player.black, Player.w, Player.h);
+		// **************GAME OVER***********************************
 	}	
 }
 
-void GameInit(void){
+void PlayerInit(void){
 	Player.x=53; 
 	Player.y=151;
 	Player.vx=0;
@@ -133,6 +135,154 @@ void SysTick_Handler(void){
 	GameMove();
 }
 
+///********************************************************************************************
+struct bullet{
+	int32_t Bx;
+	int32_t By;
+	int32_t Bvx, Bvy; //pixels/30Hz
+	const unsigned short *Bimage;
+	const unsigned short *Bblack;
+	uint32_t Bw;
+	uint32_t Bh;
+	status_t Blife;
+};
+
+typedef struct bullet bullet_t;
+bullet_t Bullet;
+
+void BulletDraw(void){
+	if(Bullet.Blife == alive){
+		ST7735_DrawBitmap(Bullet.Bx, Bullet.By, Bullet.Bimage, Bullet.Bw, Bullet.Bh);
+	}
+	else{
+		ST7735_DrawBitmap(Bullet.Bx, Bullet.By, Bullet.Bblack, Bullet.Bw, Bullet.Bh);
+	}	
+}
+
+void BulletMove(void){
+	ST7735_DrawBitmap(Bullet.Bx, Bullet.By, Bullet.Bblack, Bullet.Bw, Bullet.Bh);
+	Bullet.By -= Bullet.Bvy;
+	BulletDraw();
+}
+
+void BulletInit(void){
+	Bullet.Bx=(Player.x)+8; 
+	Bullet.By=(Player.y)-7;
+	Bullet.Bvx=0;
+	Bullet.Bvy=1;
+	Bullet.Bimage=bullet;
+	Bullet.Bblack=blackBullet;
+	Bullet.Bw=1;
+	Bullet.Bh=7;
+	Bullet.Blife=alive;
+}
+
+//*********************************************************************************************
+uint32_t Score=0;
+struct enemy{
+	int32_t Ex;
+	int32_t Ey;
+	int32_t Evx, Evy;
+	const unsigned short *Eimage;
+	const unsigned short *Eblack;
+	status_t life;
+	uint32_t Ew;
+	uint32_t Eh;
+	uint32_t needDraw;
+	uint32_t points;
+};
+
+typedef struct enemy enemy_t;
+enemy_t Enemy[6][3];
+int Anyalive; //determines if game should be over or not
+
+void EnemyInit(void){ int i, j;
+	for(i=0;i<6;i++){
+		for(j=0; j<3; j++){
+			Enemy[i][j].Ex = 20*i;
+			Enemy[i][j].Ey = (25*j)+15;
+			Enemy[i][j].Evx = 0;
+			Enemy[i][j].Evy = 1;
+			if(j==0){
+				Enemy[i][j].Eimage = SmallEnemy10pointA;
+				Enemy[i][j].points = 10;
+			}
+			if(j==1){
+				Enemy[i][j].Eimage = SmallEnemy20pointA;
+				Enemy[i][j].points = 20;
+			}
+			if(j==2){
+				Enemy[i][j].Eimage = SmallEnemy30pointA;
+				Enemy[i][j].points = 30;
+			}
+			Enemy[i][j].Eblack = BlackEnemy;
+			Enemy[i][j].life = alive;
+			Enemy[i][j].Ew = 16;
+			Enemy[i][j].Eh= 10;
+			Enemy[i][j].needDraw =1;
+		}
+	}
+}
+
+void EnemyDraw(void){ int i, j;
+	if(Anyalive==1){
+				if(Enemy[i][j].needDraw==1){
+					if(Enemy[i][j].life == alive){
+						ST7735_DrawBitmap(Enemy[i][j].Ex, Enemy[i][j].Ey, Enemy[i][j].Eimage, Enemy[i][j].Ew, Enemy[i][j].Eh);
+					}
+					if(Enemy[i][j].life == dead){
+						ST7735_DrawBitmap(Enemy[i][j].Ex, Enemy[i][j].Ey, Enemy[i][j].Eblack, Enemy[i][j].Ew, Enemy[i][j].Eh);
+						Enemy[i][j].needDraw = 0;
+					}
+				}
+			}
+	if(Anyalive==0){
+		for(i=0;i<6;i++){
+			for(j=0; j<3; j++){
+				if(Enemy[i][j].life == dead){
+						ST7735_DrawBitmap(Enemy[i][j].Ex, Enemy[i][j].Ey, Enemy[i][j].Eblack, Enemy[i][j].Ew, Enemy[i][j].Eh);
+						Enemy[i][j].needDraw = 0;
+				}
+			}
+		}
+		// ******************GAME OVER*******************************
+	}
+}
+
+void EnemyMove(void){ int i, j;
+	Anyalive=0;
+	for(i=0;i<6;i++){
+		for(j=0; j<3; j++){
+			if(Enemy[i][j].Ey>150){
+					Enemy[i][j].life = dead;
+			}
+			if(Enemy[i][j].life == alive){ // checks laser shot
+				if((((Enemy[i][j].Ey+20) >= Bullet.By)&&(Enemy[i][j].Ey <= Bullet.By))&&((Enemy[i][j].Ex <= Bullet.Bx) && ((Enemy[i][j].Ex+16) >= Bullet.Bx))){
+					Enemy[i][j].life = dead;
+					TIMER0_IMR_R = 0X00000000;
+					ST7735_DrawBitmap(Bullet.Bx, Bullet.By, Bullet.Bblack, Bullet.Bw, Bullet.Bh);
+					Score += Enemy[i][j].points;
+				}
+			}
+			if(Enemy[i][j].life == alive){ // checks with player
+				if(Player.x <= Enemy[i][j].Ex){
+					if((Player.x+18) >= Enemy[i][j].Ex){
+						if((Player.y-10) <= Enemy[i][j].Ey){
+							Player.life = dead;
+							GameDraw();
+						}	
+					}
+				}
+			}
+			Anyalive=1;
+			Enemy[i][j].Ey += Enemy[i][j].Evy;
+			EnemyDraw();
+		}
+	}
+}
+
+//*********************************************************************************************
+
 int main(void){
 	Button_Init(); // enables edge triggered interrupts
   Random_Init(1);
@@ -140,7 +290,7 @@ int main(void){
 	DAC_Init();
 
   Output_Init();
-  ST7735_FillScreen(0x0000);            // set screen to black
+  /*ST7735_FillScreen(0x0000);            // set screen to black
 	ST7735_SetCursor(1, 1);
   ST7735_OutString("Choose a language"); // display language options
 	ST7735_SetCursor(1, 2);
@@ -152,25 +302,20 @@ int main(void){
 	
 	while((GPIO_PORTF_DATA_R & 0x11)==0x11){ // wait for button for language to be pressed
 	}
-
-	GameInit();
-  ST7735_FillScreen(0x0000); 
-	SysTick_Init(80000000/30);
+*/
+	ST7735_FillScreen(0x0000);
+	PlayerInit();
 	EnableInterrupts();
+	SysTick_Init(80000000/30);
   
   ST7735_DrawBitmap(53, 140, Bunker0, 18,5);
-
-  ST7735_DrawBitmap(0, 9, SmallEnemy10pointA, 16,10);
-  ST7735_DrawBitmap(20,9, SmallEnemy10pointB, 16,10);
-  ST7735_DrawBitmap(40, 9, SmallEnemy20pointA, 16,10);
-  ST7735_DrawBitmap(60, 9, SmallEnemy20pointB, 16,10);
-  ST7735_DrawBitmap(80, 9, SmallEnemy30pointA, 16,10);
-  ST7735_DrawBitmap(100, 9, SmallEnemy30pointB, 16,10);
-
+	
+	EnemyInit();
+	Timer2_Init(&EnemyMove, 80000000/10);
+	
 	while(1){}
 
   ST7735_FillScreen(0x0000);   // set screen to black
-	// ********DISPLAY SCORE IN LANGUAGE SELECTED********
 	
 	if(lang==1){
 		ST7735_SetCursor(1, 1);
@@ -178,7 +323,7 @@ int main(void){
 		ST7735_SetCursor(1, 2);
 		ST7735_OutString("Resultado:");
 		ST7735_SetCursor(11, 2);
-		LCD_OutDec(1234);
+		LCD_OutDec(Score);
 	}
 	else{
 		ST7735_SetCursor(1, 1);
@@ -186,7 +331,6 @@ int main(void){
 		ST7735_SetCursor(1, 2);
 		ST7735_OutString("Score:");
 		ST7735_SetCursor(7, 2);
-		LCD_OutDec(1234);
+		LCD_OutDec(Score);
 	}
-  
 }
