@@ -1,5 +1,5 @@
 .\spaceinvaders.o: SpaceInvaders.c
-.\spaceinvaders.o: D:\Users\12817\Documents\ARM\ARMCC\Bin\..\include\stdint.h
+.\spaceinvaders.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdint.h
 .\spaceinvaders.o: ../inc/tm4c123gh6pm.h
 .\spaceinvaders.o: ST7735.h
 .\spaceinvaders.o: Print.h

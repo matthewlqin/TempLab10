@@ -4,10 +4,19 @@
 #include "ST7735.h"
 #include "Pictures.h"
 #include "Timer1.h"
+#include "TExas.h"
 
 void BulletInit(void);
 void BulletMove(void);
 void Timer0_Init(void(*task)(void), uint32_t period);
+void DisableInterrupts(void); // Disable interrupts
+void EnableInterrupts(void);  // Enable interrupts
+
+extern uint8_t sound;
+extern uint8_t NoSound;
+
+extern void EnemyDraw(void);
+extern void EnemyMove(void);
 
 // Buttons.c
 // Use edge triggered interrupts to read PF0 and PF4
@@ -31,13 +40,15 @@ void Button_Init(void){volatile long delay;
   GPIO_PORTF_IEV_R &= ~0x11;     //    PF4,0 falling edge event (Neg logic)
   GPIO_PORTF_ICR_R = 0x11;      //    clear flag1-0
   GPIO_PORTF_IM_R |= 0x11;      // 8) arm interrupt on PF4,0
-                                // 9) GPIOF priority 4
-  NVIC_PRI7_R = (NVIC_PRI7_R&0xFF0FFFFF)|0x00800000;
+                                // 9) GPIOF priority 1
+  NVIC_PRI7_R = (NVIC_PRI7_R&0xFF0FFFFF)|0x00200000;
   NVIC_EN0_R = 1<<30;   // 10)enable interrupt 30 in NVIC
 }
 
 uint8_t status=0;
 uint8_t lang;
+uint32_t reload1, reload2, reload3, reload4;
+uint8_t pause=0;
 void GPIOPortF_Handler(void){
 	if(status==0){
 		if((GPIO_PORTF_RIS_R & 0x10)==0x10){ //PF4
@@ -48,14 +59,21 @@ void GPIOPortF_Handler(void){
 	}
 	
 	if(status==1){
-		if ((GPIO_PORTF_RIS_R & 0x01)==0x01){ //PF0
-			Sound_Play();
-			BulletInit();
-			Timer0_Init(&BulletMove, 80000000/200); // 500 Hz
+		if(TIMER0_CTL_R !=0){
+			if ((GPIO_PORTF_RIS_R & 0x01)==0x01){ //PF0
+				if(NoSound==0){ // no bullet on screen currently
+				sound=0;
+				Sound_Play();
+				BulletInit();
+				Timer0_Init(&BulletMove, 80000000/200); // 300 Hz
+				}
+			}
 		}
 		if((GPIO_PORTF_RIS_R & 0x10)==0x10){ //PF4
-			// **********PAUSE GAME****************
-			// **********EOR ALL INTERRUPTS USED****
+			TIMER0_CTL_R ^=1;
+			TIMER1_CTL_R ^=1;
+			TIMER2_CTL_R ^=1;
+			NVIC_ST_CTRL_R ^=1;
 		}
 		GPIO_PORTF_ICR_R = 0x11;      // acknowledge flag4
 	}
